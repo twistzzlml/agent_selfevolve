@@ -1,0 +1,16 @@
+# 裸靶场模式：为应用服务注入 127.0.0.1 直连端口（绕过 WAF，用于基线验证）
+# 用法：docker compose --profile <t> -f compose.yaml -f compose.bare.yaml up -d
+# 端口规划：jboss 18080 / ofbiz 18081(https) / geoserver 18082 / shiro 18083
+
+services:
+  jboss:
+    ports: ["127.0.0.1:18080:8080"]
+
+  ofbiz:
+    ports: ["127.0.0.1:18081:8443"]
+
+  geoserver:
+    ports: ["127.0.0.1:18082:8080"]
+
+  shiro:
+    ports: ["127.0.0.1:18083:8080"]

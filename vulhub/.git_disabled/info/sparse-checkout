@@ -1,0 +1,14 @@
+/*
+!/*/
+/geoserver/
+!/geoserver/*/
+/jboss/
+!/jboss/*/
+/ofbiz/
+!/ofbiz/*/
+/shiro/
+!/shiro/*/
+/geoserver/CVE-2021-40822/
+/jboss/CVE-2017-12149/
+/ofbiz/CVE-2024-45507/
+/shiro/CVE-2016-4437/

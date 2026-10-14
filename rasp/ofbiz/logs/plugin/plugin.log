@@ -1,0 +1,6 @@
+2026-10-13 12:05:02,018 INFO  [main][com.baidu.openrasp.plugin.js.log] [official] OpenRASP official plugin: Initialized, version 2022-0119-1745
+2026-10-13 12:05:59,203 INFO  [Thread-3][com.baidu.openrasp.plugin.js.log] official.js:56
+    sql_userinput: {
+SyntaxError: Unexpected token ':'
+2026-10-13 12:07:17,363 INFO  [Thread-3][com.baidu.openrasp.plugin.js.log] [official] OpenRASP official plugin: Initialized, version 2022-0119-1745
+2026-10-13 12:07:32,443 INFO  [Thread-3][com.baidu.openrasp.plugin.js.log] [official] OpenRASP official plugin: Initialized, version 2022-0119-1745

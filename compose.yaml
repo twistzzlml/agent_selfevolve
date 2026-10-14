@@ -1,0 +1,119 @@
+# multi-round-lab 主编排
+# 四个靶场（jboss / ofbiz / geoserver / shiro），每个靶场一套独立 docker 网络。
+# 应用服务默认不发布宿主端口：
+#   裸靶场模式  = -f compose.yaml -f compose.bare.yaml  （注入 127.0.0.1:1808x 直连端口）
+#   WAF 模式    = -f compose.yaml（仅 WAF 端口 127.0.0.1:1838x，流量强制过 WAF）
+#   RASP 模式   = -f compose.yaml -f compose.rasp.yaml （应用直连端口 1808x，进程内挂 agent）
+# 同一时刻只用一种模式，避免归因歧义（严格互斥）。
+# 用法示例：docker compose --profile jboss -f compose.yaml -f compose.bare.yaml up -d
+
+services:
+  # ---------------- 靶场应用 ----------------
+  jboss:
+    image: vulhub/jboss:as-6.1.0
+    profiles: [jboss]
+    networks: [jboss]
+
+  ofbiz:
+    image: vulhub/ofbiz:18.12.15
+    profiles: [ofbiz]
+    networks: [ofbiz]
+
+  geoserver:
+    image: vulhub/geoserver:2.19.1
+    profiles: [geoserver]
+    networks: [geoserver]
+
+  shiro:
+    image: vulhub/shiro:1.2.4
+    profiles: [shiro]
+    command: [java, -jar, /shirodemo-1.0-SNAPSHOT.jar]
+    networks: [shiro]
+
+  # ---------------- 攻击基础设施 ----------------
+  # HTTP 载荷服务器：OFBiz 恶意 Screen XML、GeoServer/SSRF 回连测试目标。
+  # 仅监听 docker 内网 + 127.0.0.1:19080（操作员检查用），严格不出本机。
+  infra:
+    image: python:3-alpine
+    profiles: [jboss, ofbiz, geoserver, shiro]
+    command: ["python", "-m", "http.server", "8000", "--directory", "/srv"]
+    volumes:
+      - ./infrastructure/www:/srv:ro
+    ports: ["127.0.0.1:19080:8000"]
+    networks:
+      jboss:
+        aliases: [infra, evil.com]
+      ofbiz:
+        aliases: [infra, evil.com]
+      geoserver:
+        aliases: [infra, evil.com]
+      shiro:
+        aliases: [infra, evil.com]
+
+  # ---------------- WAF：ModSecurity v3 + OWASP CRS（nginx），每靶场一个实例 ----------------
+  waf-jboss:
+    image: owasp/modsecurity-crs:nginx@sha256:ac057618e2c42e8192c000cb918ae1dff11446cf12beb6b23d4fa0065b0fe5be
+    profiles: [jboss-waf]
+    depends_on: [jboss]
+    ports: ["127.0.0.1:18380:8080"]
+    environment:
+      BACKEND: http://jboss:8080
+      MODSEC_RULE_ENGINE: "On"
+      MODSEC_AUDIT_ENGINE: "On"
+      MODSEC_AUDIT_LOG_FORMAT: JSON
+    volumes:
+      - ./defense/waf/jboss-rules.conf:/etc/modsecurity.d/owasp-crs/rules/REQUEST-900-EXCLUSION-RULES-BEFORE-CRS.conf:ro
+      - ./defense/waf/jboss-999-after.conf:/etc/modsecurity.d/owasp-crs/rules/REQUEST-999-EXCLUSION-RULES-AFTER-CRS.conf:ro
+    networks: [jboss]
+
+  waf-ofbiz:
+    image: owasp/modsecurity-crs:nginx@sha256:ac057618e2c42e8192c000cb918ae1dff11446cf12beb6b23d4fa0065b0fe5be
+    profiles: [ofbiz-waf]
+    depends_on: [ofbiz]
+    ports: ["127.0.0.1:18381:8443"]
+    environment:
+      BACKEND: https://ofbiz:8443
+      PROXY_HOST_HEADER: "$$http_host"
+      NGINX_X_FORWARDED_PORT: "18381"
+      PROXY_SSL_VERIFY: "off"
+      MODSEC_RULE_ENGINE: "On"
+      MODSEC_AUDIT_ENGINE: "On"
+      MODSEC_AUDIT_LOG_FORMAT: JSON
+    volumes:
+      - ./defense/waf/ofbiz-rules.conf:/etc/modsecurity.d/owasp-crs/rules/REQUEST-900-EXCLUSION-RULES-BEFORE-CRS.conf:ro
+    networks: [ofbiz]
+
+  waf-geoserver:
+    image: owasp/modsecurity-crs:nginx@sha256:ac057618e2c42e8192c000cb918ae1dff11446cf12beb6b23d4fa0065b0fe5be
+    profiles: [geoserver-waf]
+    depends_on: [geoserver]
+    ports: ["127.0.0.1:18382:8080"]
+    environment:
+      BACKEND: http://geoserver:8080
+      PROXY_HOST_HEADER: "$$http_host"
+      MODSEC_RULE_ENGINE: "On"
+      MODSEC_AUDIT_ENGINE: "On"
+      MODSEC_AUDIT_LOG_FORMAT: JSON
+    volumes:
+      - ./defense/waf/geoserver-rules.conf:/etc/modsecurity.d/owasp-crs/rules/REQUEST-900-EXCLUSION-RULES-BEFORE-CRS.conf:ro
+    networks: [geoserver]
+
+  waf-shiro:
+    image: owasp/modsecurity-crs:nginx@sha256:ac057618e2c42e8192c000cb918ae1dff11446cf12beb6b23d4fa0065b0fe5be
+    profiles: [shiro-waf]
+    depends_on: [shiro]
+    ports: ["127.0.0.1:18383:8080"]
+    environment:
+      BACKEND: http://shiro:8080
+      MODSEC_RULE_ENGINE: "On"
+      MODSEC_AUDIT_ENGINE: "On"
+      MODSEC_AUDIT_LOG_FORMAT: JSON
+    volumes:
+      - ./defense/waf/shiro-rules.conf:/etc/modsecurity.d/owasp-crs/rules/REQUEST-900-EXCLUSION-RULES-BEFORE-CRS.conf:ro
+    networks: [shiro]
+
+networks:
+  jboss: {}
+  ofbiz: {}
+  geoserver: {}
+  shiro: {}

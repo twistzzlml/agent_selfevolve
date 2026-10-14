@@ -1,0 +1,69 @@
+HANDLE 8257536 @5
+HANDLE 8257537 @6
+HANDLE 8257538 @53
+HANDLE 8257539 @54
+HANDLE 8257540 @126
+HANDLE 8257541 @153
+HANDLE 8257542 @173
+HANDLE 8257543 @179
+HANDLE 8257544 @180
+HANDLE 8257545 @246
+HANDLE 8257546 @295
+HANDLE 8257547 @296
+HANDLE 8257548 @384
+HANDLE 8257549 @434
+HANDLE 8257550 @435
+HANDLE 8257551 @500
+HANDLE 8257552 @501
+HANDLE 8257553 @593
+HANDLE 8257554 @594
+HANDLE 8257555 @627
+HANDLE 8257556 @628
+HANDLE 8257557 @708
+HANDLE 8257558 @744
+HANDLE 8257559 @779
+HANDLE 8257560 @802
+HANDLE 8257561 @803
+HANDLE 8257562 @842
+HANDLE 8257563 @855
+HANDLE 8257564 @856
+HANDLE 8257565 @894
+HANDLE 8257566 @906
+Traceback (most recent call last):
+  File "D:\Amywork\AgentSelf_Evolve\experiment\multi-round-lab\exp\jboss\utf8_mutate.py", line 333, in <module>
+    rebuilt = process(raw, mutate=False)
+  File "D:\Amywork\AgentSelf_Evolve\experiment\multi-round-lab\exp\jboss\utf8_mutate.py", line 321, in process
+    r = p.content()
+  File "D:\Amywork\AgentSelf_Evolve\experiment\multi-round-lab\exp\jboss\utf8_mutate.py", line 137, in content
+    self.new_object()
+  File "D:\Amywork\AgentSelf_Evolve\experiment\multi-round-lab\exp\jboss\utf8_mutate.py", line 252, in new_object
+    self.contents_until_end()
+  File "D:\Amywork\AgentSelf_Evolve\experiment\multi-round-lab\exp\jboss\utf8_mutate.py", line 145, in contents_until_end
+    r = self.content()
+  File "D:\Amywork\AgentSelf_Evolve\experiment\multi-round-lab\exp\jboss\utf8_mutate.py", line 137, in content
+    self.new_object()
+  File "D:\Amywork\AgentSelf_Evolve\experiment\multi-round-lab\exp\jboss\utf8_mutate.py", line 250, in new_object
+    self.content()
+  File "D:\Amywork\AgentSelf_Evolve\experiment\multi-round-lab\exp\jboss\utf8_mutate.py", line 137, in content
+    self.new_object()
+  File "D:\Amywork\AgentSelf_Evolve\experiment\multi-round-lab\exp\jboss\utf8_mutate.py", line 250, in new_object
+    self.content()
+  File "D:\Amywork\AgentSelf_Evolve\experiment\multi-round-lab\exp\jboss\utf8_mutate.py", line 137, in content
+    self.new_object()
+  File "D:\Amywork\AgentSelf_Evolve\experiment\multi-round-lab\exp\jboss\utf8_mutate.py", line 250, in new_object
+    self.content()
+  File "D:\Amywork\AgentSelf_Evolve\experiment\multi-round-lab\exp\jboss\utf8_mutate.py", line 128, in content
+    self.new_array()
+  File "D:\Amywork\AgentSelf_Evolve\experiment\multi-round-lab\exp\jboss\utf8_mutate.py", line 264, in new_array
+    self.content()
+  File "D:\Amywork\AgentSelf_Evolve\experiment\multi-round-lab\exp\jboss\utf8_mutate.py", line 137, in content
+    self.new_object()
+  File "D:\Amywork\AgentSelf_Evolve\experiment\multi-round-lab\exp\jboss\utf8_mutate.py", line 250, in new_object
+    self.content()
+  File "D:\Amywork\AgentSelf_Evolve\experiment\multi-round-lab\exp\jboss\utf8_mutate.py", line 128, in content
+    self.new_array()
+  File "D:\Amywork\AgentSelf_Evolve\experiment\multi-round-lab\exp\jboss\utf8_mutate.py", line 257, in new_array
+    chain = self.classdesc_ref()
+  File "D:\Amywork\AgentSelf_Evolve\experiment\multi-round-lab\exp\jboss\utf8_mutate.py", line 233, in classdesc_ref
+    raise KeyError("classdesc ref %d 未登记；已登记: %s" %
+KeyError: 'classdesc ref 8257563 未登记；已登记: [8257550, 8257552, 8257554, 8257556, 8257561, 8257564]'

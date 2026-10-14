@@ -1,0 +1,173 @@
+HANDLE 8257536 @6
+HANDLE 8257537 @72
+HANDLE 8257538 @94
+HANDLE 8257539 @128
+HANDLE 8257540 @169
+HANDLE 8257541 @209
+HANDLE 8257542 @243
+HANDLE 8257543 @299
+CD #3 java.lang.Throwable flags=3 fields=4 @319
+CD #2 java.lang.Exception flags=2 fields=0 @319
+CD #0 javax.management.BadAttributeValueExpException flags=2 fields=1 @319
+HANDLE 8257544 @319
+OBJ javax.management.BadAttributeValueExpException @319
+  VALS javax.management.BadAttributeValueExpException fields=1 @319
+REF 8257544 @324
+  DONE javax.management.BadAttributeValueExpException @324
+  VALS java.lang.Exception fields=0 @324
+  DONE java.lang.Exception @324
+  VALS java.lang.Throwable fields=4 @324
+HANDLE 8257545 @327
+CD #9 [Ljava.lang.StackTraceElement; flags=2 fields=0 @372
+HANDLE 8257546 @372
+HANDLE 8257547 @378
+CD #11 java.lang.StackTraceElement flags=2 fields=4 @489
+HANDLE 8257548 @489
+OBJ java.lang.StackTraceElement @489
+  VALS java.lang.StackTraceElement fields=4 @489
+HANDLE 8257549 @494
+HANDLE 8257550 @535
+HANDLE 8257551 @562
+  DONE java.lang.StackTraceElement @573
+HANDLE 8257552 @579
+OBJ java.lang.StackTraceElement @579
+  VALS java.lang.StackTraceElement fields=4 @579
+REF 8257549 @588
+REF 8257550 @593
+REF 8257551 @598
+  DONE java.lang.StackTraceElement @598
+HANDLE 8257553 @604
+OBJ java.lang.StackTraceElement @604
+  VALS java.lang.StackTraceElement fields=4 @604
+HANDLE 8257554 @609
+HANDLE 8257555 @637
+HANDLE 8257556 @660
+  DONE java.lang.StackTraceElement @666
+HANDLE 8257557 @668
+HANDLE 8257558 @733
+HANDLE 8257559 @795
+CD #22 java.util.Collections$UnmodifiableCollection flags=2 fields=1 @821
+CD #21 java.util.Collections$UnmodifiableList flags=2 fields=1 @821
+HANDLE 8257560 @821
+OBJ java.util.Collections$UnmodifiableList @821
+  VALS java.util.Collections$UnmodifiableList fields=1 @821
+HANDLE 8257561 @823
+CD #25 java.util.ArrayList flags=3 fields=1 @864
+HANDLE 8257562 @864
+OBJ java.util.ArrayList @864
+  VALS java.util.ArrayList fields=1 @864
+  DONE java.util.ArrayList @875
+  DONE java.util.Collections$UnmodifiableList @875
+  VALS java.util.Collections$UnmodifiableCollection fields=1 @875
+REF 8257562 @880
+  DONE java.util.Collections$UnmodifiableCollection @880
+HANDLE 8257563 @883
+HANDLE 8257564 @966
+CD #27 org.apache.commons.collections.keyvalue.TiedMapEntry flags=2 fields=2 @985
+HANDLE 8257565 @985
+OBJ org.apache.commons.collections.keyvalue.TiedMapEntry @985
+  VALS org.apache.commons.collections.keyvalue.TiedMapEntry fields=2 @985
+HANDLE 8257566 @986
+HANDLE 8257567 @993
+HANDLE 8257568 @1059
+CD #31 org.apache.commons.collections.map.LazyMap flags=3 fields=1 @1107
+HANDLE 8257569 @1107
+OBJ org.apache.commons.collections.map.LazyMap @1107
+  VALS org.apache.commons.collections.map.LazyMap fields=1 @1107
+HANDLE 8257570 @1109
+HANDLE 8257571 @1197
+CD #34 org.apache.commons.collections.functors.ChainedTransformer flags=2 fields=1 @1246
+HANDLE 8257572 @1246
+OBJ org.apache.commons.collections.functors.ChainedTransformer @1246
+  VALS org.apache.commons.collections.functors.ChainedTransformer fields=1 @1246
+HANDLE 8257573 @1248
+CD #37 [Lorg.apache.commons.collections.Transformer; flags=2 fields=0 @1308
+HANDLE 8257574 @1308
+HANDLE 8257575 @1314
+CD #39 org.apache.commons.collections.functors.ConstantTransformer flags=2 fields=1 @1405
+HANDLE 8257576 @1405
+OBJ org.apache.commons.collections.functors.ConstantTransformer @1405
+  VALS org.apache.commons.collections.functors.ConstantTransformer fields=1 @1405
+HANDLE 8257577 @1407
+CD #41 java.lang.Runtime flags=0 fields=0 @1439
+HANDLE 8257578 @1439
+  DONE org.apache.commons.collections.functors.ConstantTransformer @1439
+HANDLE 8257579 @1441
+HANDLE 8257580 @1521
+HANDLE 8257581 @1576
+CD #43 org.apache.commons.collections.functors.InvokerTransformer flags=2 fields=3 @1598
+HANDLE 8257582 @1598
+OBJ org.apache.commons.collections.functors.InvokerTransformer @1598
+  VALS org.apache.commons.collections.functors.InvokerTransformer fields=3 @1598
+HANDLE 8257583 @1600
+CD #47 [Ljava.lang.Object; flags=2 fields=0 @1634
+HANDLE 8257584 @1634
+HANDLE 8257585 @1639
+HANDLE 8257586 @1653
+CD #50 [Ljava.lang.Class; flags=2 fields=0 @1686
+HANDLE 8257587 @1686
+HANDLE 8257588 @1691
+HANDLE 8257589 @1708
+HANDLE 8257590 @1714
+CD #54 java.lang.String flags=2 fields=0 @1745
+HANDLE 8257591 @1745
+HANDLE 8257592 @1751
+  DONE org.apache.commons.collections.functors.InvokerTransformer @1751
+HANDLE 8257593 @1757
+OBJ org.apache.commons.collections.functors.InvokerTransformer @1757
+  VALS org.apache.commons.collections.functors.InvokerTransformer fields=3 @1757
+HANDLE 8257594 @1763
+HANDLE 8257595 @1774
+HANDLE 8257596 @1779
+HANDLE 8257597 @1793
+HANDLE 8257598 @1799
+CD #62 java.lang.Object flags=0 fields=0 @1830
+HANDLE 8257599 @1830
+HANDLE 8257600 @1836
+  DONE org.apache.commons.collections.functors.InvokerTransformer @1836
+HANDLE 8257601 @1842
+OBJ org.apache.commons.collections.functors.InvokerTransformer @1842
+  VALS org.apache.commons.collections.functors.InvokerTransformer fields=3 @1842
+HANDLE 8257602 @1844
+CD #66 [Ljava.lang.String; flags=2 fields=0 @1878
+HANDLE 8257603 @1878
+HANDLE 8257604 @1883
+HANDLE 8257605 @1919
+HANDLE 8257606 @1931
+REF 8257591 @1940
+  DONE org.apache.commons.collections.functors.InvokerTransformer @1940
+HANDLE 8257607 @1946
+OBJ org.apache.commons.collections.functors.ConstantTransformer @1946
+  VALS org.apache.commons.collections.functors.ConstantTransformer fields=1 @1946
+HANDLE 8257608 @1948
+HANDLE 8257609 @1988
+CD #73 java.lang.Number flags=2 fields=0 @2019
+CD #72 java.lang.Integer flags=2 fields=1 @2019
+HANDLE 8257610 @2019
+OBJ java.lang.Integer @2019
+  VALS java.lang.Integer fields=1 @2019
+  DONE java.lang.Integer @2023
+  VALS java.lang.Number fields=0 @2023
+  DONE java.lang.Number @2023
+  DONE org.apache.commons.collections.functors.ConstantTransformer @2023
+  DONE org.apache.commons.collections.functors.ChainedTransformer @2023
+HANDLE 8257611 @2025
+CD #75 java.util.HashMap flags=3 fields=2 @2082
+HANDLE 8257612 @2082
+OBJ java.util.HashMap @2082
+  VALS java.util.HashMap fields=2 @2082
+  DONE java.util.HashMap @2101
+  DONE org.apache.commons.collections.map.LazyMap @2102
+  DONE org.apache.commons.collections.keyvalue.TiedMapEntry @2102
+Traceback (most recent call last):
+  File "D:\Amywork\AgentSelf_Evolve\experiment\multi-round-lab\exp\jboss\utf8_mutate.py", line 335, in <module>
+    rebuilt = process(raw, mutate=False)
+  File "D:\Amywork\AgentSelf_Evolve\experiment\multi-round-lab\exp\jboss\utf8_mutate.py", line 323, in process
+    r = p.content()
+  File "D:\Amywork\AgentSelf_Evolve\experiment\multi-round-lab\exp\jboss\utf8_mutate.py", line 137, in content
+    self.new_object()
+  File "D:\Amywork\AgentSelf_Evolve\experiment\multi-round-lab\exp\jboss\utf8_mutate.py", line 261, in new_object
+    self.contents_until_end()
+  File "D:\Amywork\AgentSelf_Evolve\experiment\multi-round-lab\exp\jboss\utf8_mutate.py", line 149, in contents_until_end
+    raise ValueError("注解区意外到达流尾 @%d（结构模型错位）" % self.i)
+ValueError: 注解区意外到达流尾 @2102（结构模型错位）

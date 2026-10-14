@@ -1,0 +1,31 @@
+# RASP 模式：为应用进程挂载 OpenRASP 1.3.7 java agent（同时不含 WAF，与 WAF 模式互斥）
+# 用法：docker compose --profile <t> -f compose.yaml -f compose.rasp.yaml up -d
+# 应用直连端口来自 compose.bare.yaml（RASP 轮通常与之联用）
+# OpenRASP 1.3.7 快照 2022-01-28，conf/plugins 热加载；日志在 rasp/<t>/logs/{alarm,plugin,rasp,policy_alarm}/
+
+services:
+  jboss:
+    volumes:
+      - ./rasp/jboss:/opt/openrasp
+    environment:
+      # JBoss AS 6.1 run.sh 会把 JAVA_OPTS 拼进 java 命令行（待启动后以进程参数核实）
+      JAVA_OPTS: "-javaagent:/opt/openrasp/rasp.jar"
+
+  ofbiz:
+    volumes:
+      - ./rasp/ofbiz:/opt/openrasp
+    # 上游 CMD: java -agentlib:jdwp=... -jar ./build/libs/ofbiz.jar（Java 8，WORKDIR=/usr/src/apache-ofbiz）
+    # 摘除 jdwp、插入 javaagent
+    command: [java, -javaagent:/opt/openrasp/rasp.jar, -jar, ./build/libs/ofbiz.jar]
+
+  geoserver:
+    volumes:
+      - ./rasp/geoserver:/opt/openrasp
+    environment:
+      # OpenRASP 1.3.7 在 JDK17 需要 module opens（否则 InaccessibleObjectException fail-open）
+      JAVA_OPTS: "-javaagent:/opt/openrasp/rasp.jar --add-opens java.base/jdk.internal.loader=ALL-UNNAMED --add-opens java.base/java.lang=ALL-UNNAMED --add-opens java.base/java.util=ALL-UNNAMED --add-opens java.base/java.io=ALL-UNNAMED --add-opens java.base/java.net=ALL-UNNAMED --add-opens java.base/sun.net.www.protocol.http=ALL-UNNAMED --add-opens java.base/java.lang.reflect=ALL-UNNAMED"
+
+  shiro:
+    volumes:
+      - ./rasp/shiro:/opt/openrasp
+    command: [java, -javaagent:/opt/openrasp/rasp.jar, -jar, /shirodemo-1.0-SNAPSHOT.jar]
