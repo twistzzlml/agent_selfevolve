@@ -1,0 +1,55 @@
+# JOINT 轮编排（WAF + RASP + AppArmor 三层同时在线）—— 纯组合层，不改任何已有规则内容。
+# 部署形态：
+#   docker compose -f compose.yaml -f compose.rasp.yaml -f compose.apparmor.yaml -f compose.joint.yaml \
+#     --profile jboss --profile jboss-waf --profile shiro --profile shiro-waf \
+#     --profile ofbiz --profile ofbiz-waf --profile geoserver --profile geoserver-waf up -d
+#   （前提：tools\aa_load.sh enforce 已先把四个 R2 profile 加载进内核）
+#
+# Compose 合并语义利用（本文件为最后一个 -f，优先级最高）：
+#   command（列表）  = 整体覆盖   → 本文件给出「apparmor 包装 + tmpdir + JVM 加固 + rasp agent」的全量合并命令；
+#   environment（表）= 按键合并   → 本文件重写 JAVA_OPTS（覆盖 rasp/apparmor 两层的同名键）；
+#   volumes（列表）  = 追加       → rasp 层的 /opt/openrasp 挂载保留（无害），本文件追加别名挂载。
+#
+# 关键组合修复（不加规则、只加挂载）：R2 profile 对 /opt 无读授权，-javaagent:/opt/openrasp/rasp.jar
+# 会令 JVM 初始化失败；故把同一宿主目录别名挂到 /usr/local/openrasp:ro（/usr/** rm 在四个 profile 中
+# 均已授权 读+mmap），javaagent 指向别名路径。OpenRASP 按容器内 jar 位置解析 conf/plugins/logs，
+# 读操作落在授权路径；日志写路径用 JVM 属性 -Dlog.path 指向 /run/aa-tmp/<svc>/rasplog（包装 sh 在
+# 转入 profile 前预建，R2 已授权 rwkm），若该属性不被 1.3.7 识别则按实验记录如实归档。
+#
+# 同时（沿用 rasp 层既有决定）OFBiz 的 jdwp 调试代理保持摘除 —— 关闭 R3 轮发现的 JDWP 5005 入口。
+
+services:
+  jboss:
+    volumes:
+      - ./rasp/jboss:/usr/local/openrasp:ro
+    environment:
+      # 组合修复：OpenRASP 原生库解压目录跟随 java.io.tmpdir。R2 profile 无 /tmp 授权；/run/aa-tmp/jboss
+      # 仅 rwk（无 m，mmap .so 被内核拒）；故 tmpdir 指向应用树内已授权 rwkm 的路径
+      # /jboss-6.1.0.Final/aa-tmp（包装 sh 预建），agent 可解压并 mmap 原生库，引擎完整初始化。
+      JAVA_OPTS: "-Djava.io.tmpdir=/jboss-6.1.0.Final/aa-tmp -XX:-UsePerfData -javaagent:/usr/local/openrasp/rasp.jar -Dlog.path=/run/aa-tmp/jboss/rasplog -Xbootclasspath/a:/jboss-6.1.0.Final/lib/jboss-logmanager.jar -Djava.util.logging.manager=org.jboss.logmanager.LogManager"
+    command: ["/bin/sh", "-c", "mkdir -p /run/aa-tmp/jboss /run/aa-tmp/jboss/rasplog /jboss-6.1.0.Final/aa-tmp; echo 'exec aa-jboss' > /proc/self/attr/apparmor/exec || exit 1; exec /run.sh"]
+
+  shiro:
+    volumes:
+      - ./rasp/shiro:/usr/local/openrasp:ro
+    command: ["/bin/sh", "-c", "mkdir -p /run/aa-tmp/shiro /run/aa-tmp/shiro/rasplog; echo 'exec aa-shiro' > /proc/self/attr/apparmor/exec || exit 1; exec java -Djava.io.tmpdir=/run/aa-tmp/shiro -XX:-UsePerfData -javaagent:/usr/local/openrasp/rasp.jar -Dlog.path=/run/aa-tmp/shiro/rasplog -jar /shirodemo-1.0-SNAPSHOT.jar"]
+
+  ofbiz:
+    # 联合不可行性（如实记录，证据=容器日志 multi-round-lab-ofbiz-1 首次联合启动 19:04:44）：
+    # 冻结的 official.js 默认算法 jndi_disable_all action=block，OpenRASP 1.3.7 对无请求上下文的
+    # JNDI 查找同样执法 → OFBiz 自身启动期的 RMI 查找（CatalinaContainer.prepareTomcatServer →
+    # rmi://localhost:1099）被 RASP 拦截 → StartupException → 容器退出（exit 1）。
+    # RASP 轮未曾暴露此冲突的原因（rasp/ofbiz/logs/rasp/rasp.log 12:05:02 / 12:07:32）：
+    # 当时的启动顺序是 all_log:true（观察模式，block 全部降级为 log）下完成 boot，之后才切阻断。
+    # 规则内容冻结、不可加白名单（hooks.ignore 属于 openrasp.yml 内容）→ 按任务书预案：
+    # 该靶场以 WAF + AppArmor 双层部署（本文件命令覆盖去掉 -javaagent），RASP 层记为联合不可行。
+    command: ["/bin/sh", "-c", "mkdir -p /run/aa-tmp/ofbiz; echo 'exec aa-ofbiz' > /proc/self/attr/apparmor/exec || exit 1; exec java -Djava.io.tmpdir=/run/aa-tmp/ofbiz -XX:-UsePerfData -jar ./build/libs/ofbiz.jar"]
+
+  geoserver:
+    volumes:
+      - ./rasp/geoserver:/usr/local/openrasp:ro
+    environment:
+      # 覆盖 compose.rasp.yaml 的同名键（按键合并、后者胜），避免残留指向 /opt（R2 无读授权）的旧值；
+      # 命令内的 export 与此值保持一致（startup.sh 两者任一都能吃到）。
+      JAVA_OPTS: "-Djava.io.tmpdir=/run/aa-tmp/geo -XX:-UsePerfData -javaagent:/usr/local/openrasp/rasp.jar -Dlog.path=/run/aa-tmp/geo/rasplog --add-opens java.base/jdk.internal.loader=ALL-UNNAMED --add-opens java.base/java.lang=ALL-UNNAMED --add-opens java.base/java.util=ALL-UNNAMED --add-opens java.base/java.io=ALL-UNNAMED --add-opens java.base/java.net=ALL-UNNAMED --add-opens java.base/sun.net.www.protocol.http=ALL-UNNAMED --add-opens java.base/java.lang.reflect=ALL-UNNAMED"
+    command: ["/bin/sh", "-c", "mkdir -p /run/aa-tmp/geo /run/aa-tmp/geo/rasplog; export JAVA_OPTS='-Djava.io.tmpdir=/run/aa-tmp/geo -XX:-UsePerfData -javaagent:/usr/local/openrasp/rasp.jar -Dlog.path=/run/aa-tmp/geo/rasplog --add-opens java.base/jdk.internal.loader=ALL-UNNAMED --add-opens java.base/java.lang=ALL-UNNAMED --add-opens java.base/java.util=ALL-UNNAMED --add-opens java.base/java.io=ALL-UNNAMED --add-opens java.base/java.net=ALL-UNNAMED --add-opens java.base/sun.net.www.protocol.http=ALL-UNNAMED --add-opens java.base/java.lang.reflect=ALL-UNNAMED'; echo 'exec aa-geoserver' > /proc/self/attr/apparmor/exec || exit 1; exec /mnt/geoserver/bin/startup.sh"]

@@ -4,7 +4,7 @@
     <screen name="TemporalExpressionDecorator">
         <section>
             <actions>
-                <set value="${groovy:'touch /tmp/bt_should_not_exist'.execute()}"/>
+                <set value="${groovy:'touch /tmp/pwn_joint_ofbiz_temporal'.execute()}"/>
             </actions>
         </section>
     </screen>

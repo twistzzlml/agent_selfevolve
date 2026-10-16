@@ -1,0 +1,9 @@
+#include <tunables/global>
+
+profile aa-smoke-test flags=(attach_disconnected,mediate_deleted) {
+  #include <abstractions/base>
+
+  # smoke test: forbid any write/create under /tmp, allow read
+  deny /tmp/** w,
+  deny /tmp/ w,
+}

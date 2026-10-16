@@ -1,0 +1,41 @@
+#include <tunables/global>
+
+profile aa-shiro flags=(attach_disconnected,mediate_deleted) {
+  #include <abstractions/base>
+  #include <abstractions/nameservice>
+
+  # R2: explicit reads only (was /** rm bulk grant)
+  / r,
+  /**/ r,
+  /usr/ r,
+  /usr/** rm,
+  /lib/ r,
+  /lib/** rm,
+  /lib64/ r,
+  /lib64/** rm,
+  /etc/ r,
+  /etc/** r,
+  /root/ r,
+  /root/** rm,
+  /proc/ r,
+  /proc/** r,
+  /sys/ r,
+  /sys/** r,
+  /shirodemo-1.0-SNAPSHOT.jar rm,
+
+  # network: serving only; raw sockets revoked in R2
+  network inet stream,
+  network inet6 stream,
+  network inet dgram,
+  network inet6 dgram,
+
+  # exec: JVM only (unchanged from R0 — this app never exec'd toolchain)
+  /usr/lib/jvm/** ix,
+  /usr/bin/java ix,
+
+  # R2: tmpdir relocated off /tmp (java.io.tmpdir=/run/aa-tmp/shiro);
+  # every /tmp glob from R0 (tomcat*, hsperfdata) removed
+  /run/aa-tmp/ rwkm,
+  /run/aa-tmp/shiro/ rwkm,
+  /run/aa-tmp/shiro/** rwkm,
+}

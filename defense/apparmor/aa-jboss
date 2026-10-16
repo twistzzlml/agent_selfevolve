@@ -1,0 +1,63 @@
+#include <tunables/global>
+
+profile aa-jboss flags=(attach_disconnected,mediate_deleted) {
+  #include <abstractions/base>
+  #include <abstractions/nameservice>
+
+  # R2: explicit reads only (was /** rm bulk grant)
+  / r,
+  /**/ r,
+  /usr/ r,
+  /usr/** rm,
+  /lib/ r,
+  /lib/** rm,
+  /lib64/ r,
+  /lib64/** rm,
+  /etc/ r,
+  /etc/** r,
+  /proc/ r,
+  /proc/** r,
+  /sys/ r,
+  /sys/** r,
+
+  # network: serving only; raw sockets revoked in R2
+  network inet stream,
+  network inet6 stream,
+  network inet dgram,
+  network inet6 dgram,
+
+  # exec: enumerated startup toolchain + JVM (touch deliberately excluded;
+  # the admin-pass bootstrap step fails soft, defense stays hard)
+  /bin/sh ix,
+  /bin/grep ix,
+  /bin/sed ix,
+  /bin/cat ix,
+  /bin/cp ix,
+  /bin/rm ix,
+  /bin/mv ix,
+  /bin/mkdir ix,
+  /bin/chmod ix,
+  /bin/chown ix,
+  /bin/uname ix,
+  /bin/sleep ix,
+  /bin/cut ix,
+  /usr/bin/dirname ix,
+  /usr/bin/basename ix,
+  /usr/bin/cut ix,
+  /usr/bin/tr ix,
+  /usr/bin/expr ix,
+  /usr/bin/awk ix,
+  /usr/lib/jvm/** ix,
+  /run.sh rix,
+  /set_jboss_admin_pass.sh rix,
+  /jboss-6.1.0.Final/bin/run.sh rix,
+
+  # app tree + relocated tmpdir (writes anywhere else = default deny)
+  /dev/tty rw,
+  /jboss-6.1.0.Final/ rwkm,
+  /jboss-6.1.0.Final/** rwkm,
+  /.jboss_admin_pass_configured rw,
+  /run/aa-tmp/ rwk,
+  /run/aa-tmp/jboss/ rwk,
+  /run/aa-tmp/jboss/** rwk,
+}

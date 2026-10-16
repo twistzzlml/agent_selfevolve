@@ -1,0 +1,23 @@
+# AppArmor 轮编排层：为四个靶场容器注入「自转入 profile」的启动包装。
+# 机制：容器 PID1（unconfined）向 /proc/self/attr/apparmor/exec 写入 "exec <profile>"，
+# 随后 exec 真实启动命令 → 内核在 exec 时把整个进程树挂入对应 profile。
+# profile 若未加载进内核，写 attr 会失败 → exit 1（fail-closed，容器拒绝启动）。
+# 与裸靶场模式联用：docker compose --profile <t> -f compose.yaml -f compose.bare.yaml -f compose.apparmor.yaml up -d
+#
+# R2 加固：JVM 改 -XX:-UsePerfData（不再写 /tmp/hsperfdata），java.io.tmpdir 迁到
+# /run/aa-tmp/<svc>（包装 sh 在转入 profile 前 mkdir，路径固定不可被攻击者挑选），
+# 从而 profile 中不再存在任何 /tmp 通配规则。
+services:
+  jboss:
+    environment:
+      JAVA_OPTS: "-XX:-UsePerfData"
+    command: ["/bin/sh", "-c", "mkdir -p /run/aa-tmp/jboss; echo 'exec aa-jboss' > /proc/self/attr/apparmor/exec || exit 1; exec /run.sh"]
+
+  ofbiz:
+    command: ["/bin/sh", "-c", "mkdir -p /run/aa-tmp/ofbiz; echo 'exec aa-ofbiz' > /proc/self/attr/apparmor/exec || exit 1; exec java -Djava.io.tmpdir=/run/aa-tmp/ofbiz -XX:-UsePerfData -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5005 -jar ./build/libs/ofbiz.jar"]
+
+  geoserver:
+    command: ["/bin/sh", "-c", "mkdir -p /run/aa-tmp/geo; export JAVA_OPTS='-Djava.io.tmpdir=/run/aa-tmp/geo -XX:-UsePerfData'; echo 'exec aa-geoserver' > /proc/self/attr/apparmor/exec || exit 1; exec /mnt/geoserver/bin/startup.sh"]
+
+  shiro:
+    command: ["/bin/sh", "-c", "mkdir -p /run/aa-tmp/shiro; echo 'exec aa-shiro' > /proc/self/attr/apparmor/exec || exit 1; exec java -Djava.io.tmpdir=/run/aa-tmp/shiro -XX:-UsePerfData -jar /shirodemo-1.0-SNAPSHOT.jar"]
